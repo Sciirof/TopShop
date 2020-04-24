@@ -1,0 +1,21 @@
+main: com.pigeoncraft.topshop.Main
+name: TopShop
+version: 1.0
+author: Sciirof
+
+api-version: 1.13
+
+commands:
+  ts:
+  ts add:
+    usage: /ts add <buyPrice> <sellPrice>
+    permission: topshop.add
+    description: Add items to the shop
+  ts reload:
+    usage: /ts reload
+    permission: topshop.reload
+    description: Reloads the plugin
+  shop:
+    usage: /shop
+    permission: topshop.shop
+    description: Opens the shop GUI
