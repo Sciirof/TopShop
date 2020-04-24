@@ -3,6 +3,7 @@
 </p>
 
 [![Discord](https://img.shields.io/discord/703255127347429386?label=discord)](https://discord.gg/jPJ9Ugs)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Sciirof/TopShop)](https://github.com/Sciirof/TopShop/releases/latest/)
 # TopShop
 TopShop is a GUI AdminShop plugin that allows server admins to add items to a global GUI shop. 
 Users with the correct permissions are able to view, buy and sell in this shop.
