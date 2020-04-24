@@ -2,7 +2,7 @@
 <img src="https://i.ibb.co/0KWhPY8/Top-Shop-Banner.png">
 </p>
 
-[![Discord](https://img.shields.io/discord/241667244927483904.svg?logo=discord&label=)](https://discord.gg/jPJ9Ugs)
+[![Discord]()](https://discord.gg/jPJ9Ugs)
 # TopShop
 TopShop is a GUI AdminShop plugin that allows server admins to add items to a global GUI shop. 
 Users with the correct permissions are able to view, buy and sell in this shop.
