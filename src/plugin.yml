@@ -6,7 +6,6 @@ author: Sciirof
 api-version: 1.13
 
 commands:
-  ts:
   ts add:
     usage: /ts add <buyPrice> <sellPrice>
     permission: topshop.add

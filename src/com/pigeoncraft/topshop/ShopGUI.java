@@ -154,73 +154,90 @@ public class ShopGUI implements InventoryHolder, Listener{
         	double buy = (double) Integer.parseInt(clickedItem.getItemMeta().getLore().get(0).replaceAll("[^0-9]", ""));
         	double sell = (double) Integer.parseInt(clickedItem.getItemMeta().getLore().get(1).replaceAll("[^0-9]", ""));
         	if(e.getClick() == ClickType.LEFT) {
-        		if(money >= buy) {
-            		if(freeSlot(p)) {
-            			ItemStack item = new ItemStack(clickedItem.getType(), 1);
-            			p.getInventory().addItem(item);
-            			economy.withdrawPlayer(target, buy);
-            		} else {
-            			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a free slot in your inventory!"));
-            		}
-            	} else {
-            		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have enough money!"));
-            	}
+        		if(p.hasPermission("topshop.buy")) {
+        			if(money >= buy) {
+                		if(freeSlot(p)) {
+                			ItemStack item = new ItemStack(clickedItem.getType(), 1);
+                			p.getInventory().addItem(item);
+                			economy.withdrawPlayer(target, buy);
+                		} else {
+                			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a free slot in your inventory!"));
+                		}
+                	} else {
+                		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have enough money!"));
+                	}
+        		} else {
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
+        		}
+        		
         	}
         	if(e.getClick() == ClickType.RIGHT) {
-        		if(sell > 0) {
-        			ItemStack[] playerItems = p.getInventory().getContents();
-        			boolean hasItem = false;
-        			for(ItemStack item : playerItems) {
-        				if(item.getType() == clickedItem.getType()) {
-        					int stackSize = item.getAmount();
-        					item.setAmount(stackSize - 1);
-        					economy.depositPlayer(p, sell);
-        					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aThe shop paid you $"+ sell));
-        					hasItem = true;
-        					break;
-        				}
-        				if(!hasItem) {
-        					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have that item!"));
-        				}
-        			}
+        		if(p.hasPermission("topshop.sell")) {
+        			if(sell > 0) {
+            			ItemStack[] playerItems = p.getInventory().getContents();
+            			boolean hasItem = false;
+            			for(ItemStack item : playerItems) {
+            				if(item.getType() == clickedItem.getType()) {
+            					int stackSize = item.getAmount();
+            					item.setAmount(stackSize - 1);
+            					economy.depositPlayer(p, sell);
+            					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aThe shop paid you $"+ sell));
+            					hasItem = true;
+            					break;
+            				}
+            				if(!hasItem) {
+            					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have that item!"));
+            				}
+            			}
+            		} else {
+            			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe shop is currently not buying this item!"));
+            		}
         		} else {
-        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe shop is currently not buying this item!"));
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
         		}
         	}
         	if(e.getClick() == ClickType.SHIFT_RIGHT) {
-        		if(sell > 0) {
-        			ItemStack[] playerItems = p.getInventory().getContents();
-        			boolean hasItem = false;
-        			for(ItemStack item : playerItems) {
-        				int stackSize = item.getAmount();
-        				if(item.getType() == clickedItem.getType() && stackSize == clickedItem.getMaxStackSize()) {
-        					item.setAmount(0);
-        					economy.depositPlayer(p, sell * stackSize);
-        					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aThe shop paid you $"+ sell * stackSize));
-        					hasItem = true;
-        					break;
-        				}
-        				if(!hasItem) {
-        					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a stack!"));
-        				}
-        			}
+        		if(p.hasPermission("topshop.sell")) {
+        			if(sell > 0) {
+            			ItemStack[] playerItems = p.getInventory().getContents();
+            			boolean hasItem = false;
+            			for(ItemStack item : playerItems) {
+            				int stackSize = item.getAmount();
+            				if(item.getType() == clickedItem.getType() && stackSize == clickedItem.getMaxStackSize()) {
+            					item.setAmount(0);
+            					economy.depositPlayer(p, sell * stackSize);
+            					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aThe shop paid you $"+ sell * stackSize));
+            					hasItem = true;
+            					break;
+            				}
+            				if(!hasItem) {
+            					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a stack!"));
+            				}
+            			}
+            		} else {
+            			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe shop is currently not buying this item!"));
+            		}
         		} else {
-        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cThe shop is currently not buying this item!"));
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
         		}
         	}
         	if(e.getClick() == ClickType.SHIFT_LEFT) {
-        		int maxStackSize = clickedItem.getMaxStackSize();
-        		if(money >= buy * maxStackSize) {
-            		if(freeSlot(p)) {
-            			ItemStack item = new ItemStack(clickedItem.getType(), maxStackSize);
-            			p.getInventory().addItem(item);
-            			economy.withdrawPlayer(target, buy * maxStackSize);
-            		} else {
-            			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a free slot in your inventory!"));
-            		}
-            	} else {
-            		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have enough money!"));
-            	}
+        		if(p.hasPermission("topshop.buy")) {
+        			int maxStackSize = clickedItem.getMaxStackSize();
+            		if(money >= buy * maxStackSize) {
+                		if(freeSlot(p)) {
+                			ItemStack item = new ItemStack(clickedItem.getType(), maxStackSize);
+                			p.getInventory().addItem(item);
+                			economy.withdrawPlayer(target, buy * maxStackSize);
+                		} else {
+                			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have a free slot in your inventory!"));
+                		}
+                	} else {
+                		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cYou don't have enough money!"));
+                	}
+        		} else {
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
+        		}
         	}
         }
     }
