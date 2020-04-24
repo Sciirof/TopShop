@@ -35,6 +35,7 @@ Currently the config doesn't offer much I'm still looking through stuff that mig
 
 #Shop GUI title you can use color codes
 shopTitle: "&d&lTopShop&r&7 - Weclome"
+removeTitle: "&d&lTopShop&r&7 - Remove" # Title admins see when removing items
 ```
 
 # Shop
