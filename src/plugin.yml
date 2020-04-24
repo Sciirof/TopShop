@@ -6,6 +6,9 @@ author: Sciirof
 api-version: 1.13
 
 commands:
+  ts:
+    usage: /ts
+    description: Base command
   ts add:
     usage: /ts add <buyPrice> <sellPrice>
     permission: topshop.add
@@ -14,6 +17,10 @@ commands:
     usage: /ts reload
     permission: topshop.reload
     description: Reloads the plugin
+  ts remove:
+    usage: /ts remove
+    permission: topshop.remove
+    description: Remove items from shop
   shop:
     usage: /shop
     permission: topshop.shop

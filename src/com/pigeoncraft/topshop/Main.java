@@ -24,6 +24,7 @@ public class Main extends JavaPlugin {
 	private Economy econ;
 	private static File shopsFile;
 	private static ShopGUI shop;
+	private static ShopGUI removalShop;
 	
 	@Override
 	public void onEnable() {
@@ -92,10 +93,15 @@ public class Main extends JavaPlugin {
     }
     
     public void setupInventories() {
-    	shop = new ShopGUI(this);
+    	shop = new ShopGUI(this, false);
+    	removalShop = new ShopGUI(this, true);
     }
     
     public static ShopGUI getShopGUI() {
     	return shop;
+    }
+    
+    public static ShopGUI getRemoveGUI() {
+    	return removalShop;
     }
 }

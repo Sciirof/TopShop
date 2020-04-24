@@ -2,6 +2,7 @@ package com.pigeoncraft.topshop;
 
 import java.util.List;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -34,13 +35,22 @@ public class ShopGUI implements InventoryHolder, Listener{
 	private int currentPage = 1;
 	private int lastItemIndex = 0;
 	private List<ItemStack> shopItemList;
+	private boolean removeMode = false;
+	private FileConfiguration shopConf;
 	
 	//constructor
-	public ShopGUI(Main plugin) {
-		String title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("shopTitle")); //Change to defaultConfig's
+	public ShopGUI(Main plugin, boolean removeMode) {
+		String title;
+		if(!removeMode) {
+			title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("shopTitle")); //Change to defaultConfig's
+		} else {
+			title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("removeTitle")); //Change to defaultConfig's
+		}
+			
 		inv = Bukkit.createInventory(this, 27, title);
 		economy = plugin.getEconomy();
 		this.plugin = plugin;
+		this.removeMode = removeMode;
 		initializeItems();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
@@ -55,6 +65,7 @@ public class ShopGUI implements InventoryHolder, Listener{
 	{
 		File shopFile = Main.getShopConfig();
 		FileConfiguration config = YamlConfiguration.loadConfiguration(shopFile);
+		shopConf = config;
 		//config.getConfigurationSection("shop").set("Item1")
 		ConfigurationSection sec = config.getConfigurationSection("shop");
 		shopItemList = new ArrayList<ItemStack>();
@@ -153,7 +164,7 @@ public class ShopGUI implements InventoryHolder, Listener{
         	double money = economy.getBalance(target);
         	double buy = (double) Integer.parseInt(clickedItem.getItemMeta().getLore().get(0).replaceAll("[^0-9]", ""));
         	double sell = (double) Integer.parseInt(clickedItem.getItemMeta().getLore().get(1).replaceAll("[^0-9]", ""));
-        	if(e.getClick() == ClickType.LEFT) {
+        	if(e.getClick() == ClickType.LEFT && !removeMode) {
         		if(p.hasPermission("topshop.buy")) {
         			if(money >= buy) {
                 		if(freeSlot(p)) {
@@ -171,7 +182,7 @@ public class ShopGUI implements InventoryHolder, Listener{
         		}
         		
         	}
-        	if(e.getClick() == ClickType.RIGHT) {
+        	if(e.getClick() == ClickType.RIGHT && !removeMode) {
         		if(p.hasPermission("topshop.sell")) {
         			if(sell > 0) {
             			ItemStack[] playerItems = p.getInventory().getContents();
@@ -196,7 +207,7 @@ public class ShopGUI implements InventoryHolder, Listener{
         			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
         		}
         	}
-        	if(e.getClick() == ClickType.SHIFT_RIGHT) {
+        	if(e.getClick() == ClickType.SHIFT_RIGHT && !removeMode) {
         		if(p.hasPermission("topshop.sell")) {
         			if(sell > 0) {
             			ItemStack[] playerItems = p.getInventory().getContents();
@@ -221,7 +232,7 @@ public class ShopGUI implements InventoryHolder, Listener{
         			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
         		}
         	}
-        	if(e.getClick() == ClickType.SHIFT_LEFT) {
+        	if(e.getClick() == ClickType.SHIFT_LEFT && !removeMode) {
         		if(p.hasPermission("topshop.buy")) {
         			int maxStackSize = clickedItem.getMaxStackSize();
             		if(money >= buy * maxStackSize) {
@@ -237,6 +248,75 @@ public class ShopGUI implements InventoryHolder, Listener{
                 	}
         		} else {
         			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
+        		}
+        	}
+        	if(e.getClick() == ClickType.LEFT && removeMode) {
+        		if(currentPage > 1) {
+        			if(e.getRawSlot() + 24 * (currentPage - 1) < shopItemList.size() - 1) {
+        				FileConfiguration config = shopConf;
+        				ConfigurationSection sec = config.getConfigurationSection("shop");
+        				for(String key : sec.getKeys(false)) {
+        					int keyVal = Math.abs(Integer.parseInt(key.replaceAll("[^0-9]", "")));
+        					if(key == "item-" + (e.getRawSlot() + 24 * (currentPage - 1))){
+            					shopConf.set("shop.item-" + (e.getRawSlot() + 24 * (currentPage - 1)), null);
+        					}
+        					if( keyVal > e.getRawSlot() + 24 * (currentPage - 1)) {
+        						String name = sec.getConfigurationSection(key).getString("item");
+            					int _buy = sec.getConfigurationSection(key).getInt("buy");
+            					int _sell = sec.getConfigurationSection(key).getInt("sell");
+            					shopConf.set("shop.item-" + keyVal, null);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".item", name);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".buy", _buy);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".sell", _sell);
+        					}
+        				}
+        			} else {
+        				shopConf.set("shop.item-" + (e.getRawSlot() + 24 * (currentPage - 1)), null);
+        			}
+        			shopItemList.remove(e.getRawSlot() + 24 * (currentPage - 1));
+        			inv.setItem(e.getRawSlot(), new ItemStack(Material.AIR));
+        			try {
+						shopConf.save(Main.getShopConfig());
+					} catch (IOException e1) {
+						
+					}
+        			plugin.setupInventories();
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cItem "  + (e.getRawSlot() + 24 * (currentPage - 1)) + " was removed from the shop"));
+        			ShopGUI shopgui = new ShopGUI(plugin, true);
+        			shopgui.openInventory(p);
+        		} else {
+        			if(e.getRawSlot() < shopItemList.size() - 1) {
+        				FileConfiguration config = shopConf;
+        				ConfigurationSection sec = config.getConfigurationSection("shop");
+        				for(String key : sec.getKeys(false)) {
+        					int keyVal = Math.abs(Integer.parseInt(key.replaceAll("[^0-9]", "")));
+        					if(key == "item-" + (e.getRawSlot() + 24 * (currentPage - 1))){
+            					shopConf.set("shop.item-" + (e.getRawSlot()), null);
+        					}
+        					if( keyVal > e.getRawSlot() + 24 * (currentPage - 1)) {
+        						String name = sec.getConfigurationSection(key).getString("item");
+            					int _buy = sec.getConfigurationSection(key).getInt("buy");
+            					int _sell = sec.getConfigurationSection(key).getInt("sell");
+            					shopConf.set("shop.item-" + keyVal, null);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".item", name);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".buy", _buy);
+            					shopConf.set("shop.item-" + (keyVal - 1) + ".sell", _sell);
+        					}
+        				}
+        			} else {
+        				shopConf.set("shop.item-" + (e.getRawSlot()), null);
+        			}
+        			shopItemList.remove(e.getRawSlot());
+        			inv.setItem(e.getRawSlot(), new ItemStack(Material.AIR));
+        			try {
+						shopConf.save(Main.getShopConfig());
+					} catch (IOException e1) {
+						
+					}
+        			plugin.setupInventories();
+        			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cItem was removed from the shop"));
+        			ShopGUI shopgui = new ShopGUI(plugin, true);
+        			shopgui.openInventory(p);
         		}
         	}
         }

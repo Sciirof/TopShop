@@ -7,3 +7,4 @@
 
 #Shop GUI title you can use color codes
 shopTitle: "&d&lTopShop&r&7 - Weclome"
+removeTitle: "&d&lTopShop&r&7 - Remove" # Title admins see when removing items

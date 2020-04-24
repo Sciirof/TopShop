@@ -82,6 +82,23 @@ public class CommandAdd implements CommandExecutor {
 					plugin.reloadConfig();
 					plugin.setupInventories();
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&aTopShop has been reloaded!"));
+					return true;
+				}
+				if(args[0].equalsIgnoreCase("remove")) {
+					if(sender instanceof Player) {
+						Player player = (Player) sender;
+						if(player.hasPermission("topshop.remove")) {
+							ShopGUI removalShop = Main.getRemoveGUI();
+							removalShop.openInventory(player);
+							return true;
+						} else {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4You do not have permission!"));
+							return true;
+						}
+					} else {
+						sender.sendMessage("You cannot do this from your console!");
+						return true;
+					}
 				}
 			}
 			}
