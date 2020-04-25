@@ -40,7 +40,7 @@ public class ShopGUI implements InventoryHolder, Listener{
 	
 	//constructor
 	public ShopGUI(Main plugin, boolean removeMode) {
-		String title;
+		String title = "";
 		if(!removeMode) {
 			title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("shopTitle")); //Change to defaultConfig's
 		} else {
@@ -69,7 +69,6 @@ public class ShopGUI implements InventoryHolder, Listener{
 		//config.getConfigurationSection("shop").set("Item1")
 		ConfigurationSection sec = config.getConfigurationSection("shop");
 		shopItemList = new ArrayList<ItemStack>();
-		int itemCount = 0;
 		for(String key : sec.getKeys(false)) {
 			ItemStack shopItem;
 			String name = sec.getConfigurationSection(key).getString("item");
@@ -82,7 +81,6 @@ public class ShopGUI implements InventoryHolder, Listener{
 				shopItem = createGuiItem(Material.getMaterial(name), ChatColor.translateAlternateColorCodes('&', "&a&oBuy: $"  + buy), ChatColor.translateAlternateColorCodes('&', "&c&o&mSell: $" + sell));
 			}
 			shopItemList.add(shopItem);
-			itemCount++;
 		}
 		if(shopItemList.size() > 24) {
 			pageCount = (shopItemList.size() / 24) + 1;
@@ -95,8 +93,8 @@ public class ShopGUI implements InventoryHolder, Listener{
 				lastItemIndex = i;
 			}
 		}
-		inv.setItem(26, createGuiItemWithName(Material.GREEN_WOOL, "Next Page", "Navigate to the next page."));
-		inv.setItem(25, createGuiItemWithName(Material.RED_WOOL, "Previous Page", "Navigate to the previous page."));
+		inv.setItem(26, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialNextPage")), "Next Page", "Navigate to the next page."));
+		inv.setItem(25, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialPreviousPage")), "Previous Page", "Navigate to the previous page."));
 	}
 	
 	protected ItemStack createGuiItem(final Material material, final String... lore)
@@ -332,9 +330,10 @@ public class ShopGUI implements InventoryHolder, Listener{
 	private boolean loadNextPage() {
 		if (currentPage < pageCount) {
 			//set items
+			currentPage++;
 			inv.clear();
-			inv.setItem(26, createGuiItemWithName(Material.GREEN_WOOL, "Next Page", "Navigate to the next page."));
-			inv.setItem(25, createGuiItemWithName(Material.RED_WOOL, "Previous Page", "Navigate to the previous page."));
+			inv.setItem(26, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialNextPage")), "Next Page", "Navigate to the next page."));
+			inv.setItem(25, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialPreviousPage")), "Previous Page", "Navigate to the previous page."));
 			int y = 0;
 			for(int x = lastItemIndex; x <= lastItemIndex + 24; x++) {
 				if(x < shopItemList.size() && y <= 24) {
@@ -343,7 +342,6 @@ public class ShopGUI implements InventoryHolder, Listener{
 					y++;
 				}
 			}
-			currentPage++;
 			return true;
 		}
 		return false;
@@ -352,8 +350,8 @@ public class ShopGUI implements InventoryHolder, Listener{
 	private boolean loadPrevPage() {
 		if(currentPage > 1) {
 			inv.clear();
-			inv.setItem(26, createGuiItemWithName(Material.GREEN_WOOL, "Next Page", "Navigate to the next page."));
-			inv.setItem(25, createGuiItemWithName(Material.RED_WOOL, "Previous Page", "Navigate to the previous page."));
+			inv.setItem(26, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialNextPage")), "Next Page", "Navigate to the next page."));
+			inv.setItem(25, createGuiItemWithName(Material.getMaterial(plugin.getConfig().getString("materialPreviousPage")), "Previous Page", "Navigate to the previous page."));
 			//set items
 			int y = 0;
 			for(int x = lastItemIndex - 26; x <= lastItemIndex + 24; x++) {

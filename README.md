@@ -36,6 +36,11 @@ Currently the config doesn't offer much I'm still looking through stuff that mig
 #Shop GUI title you can use color codes
 shopTitle: "&d&lTopShop&r&7 - Weclome"
 removeTitle: "&d&lTopShop&r&7 - Remove" # Title admins see when removing items
+
+# If you want to change these and don't know how it works
+# Refer to: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
+materialNextPage: LIME_WOOL
+materialPreviousPage: RED_WOOL
 ```
 
 # Shop
