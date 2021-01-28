@@ -71,20 +71,15 @@ public class Main extends JavaPlugin {
     	if(!shopsF.exists()) {
 			try {
 				shopsF.createNewFile();
+				FileConfiguration config = YamlConfiguration.loadConfiguration(shopsF);
+				config.set("shop.item-0.item", Material.COBBLESTONE.toString());
+				config.set("shop.item-0.buy", 10);
+				config.set("shop.item-0.sell", 5);
+				config.save(shopsF);
 			} catch (IOException e) {
 				
 			}
     	}
-    	FileConfiguration config = YamlConfiguration.loadConfiguration(shopsF);
-		config.set("shop.item-0.item", Material.COBBLESTONE.toString());
-		config.set("shop.item-0.buy", 10);
-		config.set("shop.item-0.sell", 5);
-		try {
-			config.save(shopsF);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
     
     public static File getShopConfig() {
